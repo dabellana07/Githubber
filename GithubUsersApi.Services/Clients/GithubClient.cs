@@ -1,5 +1,8 @@
 ﻿using GithubUsersApi.Models;
+using GithubUsersApi.Services.Utils;
+using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,10 +14,15 @@ namespace GithubUsersApi.Services.Clients
         private const string GithubApiUrl = "https://api.github.com/users/";
 
         private readonly HttpClient _httpClient;
+        private readonly IProjectDeserializer _projectDeserializer;
 
-        public GithubClient(HttpClient httpClient)
+        public GithubClient(
+            HttpClient httpClient,
+            IProjectDeserializer projectDeserializer
+        )
         {
             this._httpClient = httpClient;
+            this._projectDeserializer = projectDeserializer;
         }
 
         public async Task<GithubUser> GetUserByLogin(string username)
@@ -30,18 +38,15 @@ namespace GithubUsersApi.Services.Clients
                 request.Headers.Add("Accept", "application/vnd.github.v3+json");
                 request.Headers.Add("User-Agent", "Githubber");
 
-                var response = await _httpClient.SendAsync(request);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-
-                    var jsonSerializerOptions = new JsonSerializerOptions();
-                    jsonSerializerOptions.PropertyNameCaseInsensitive = true;
-
-                    var githubUser = JsonSerializer.Deserialize<GithubUser>(responseString, jsonSerializerOptions);
-
-                    return githubUser;
+                    using (var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync()))
+                    using (var jsonTextReader = new JsonTextReader(streamReader))
+                    {
+                        return _projectDeserializer.Deserialize(jsonTextReader);
+                    }
                 }
 
                 return null;

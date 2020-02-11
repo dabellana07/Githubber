@@ -8,4 +8,8 @@
     <ProjectReference Include="..\GithubUsersApi.Models\GithubUsersApi.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
 </Project>
