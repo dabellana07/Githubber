@@ -63,7 +63,7 @@ namespace GithubUsersApi.Tests.Services
             var httpClientFactoryMoq = new Mock<IHttpClientFactory>();
             httpClientFactoryMoq.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
 
-            var githubService = new GithubService(httpClientFactoryMoq.Object);
+            var githubService = new GithubService(client);
 
             var githubServiceMessage = await githubService.GetUser("destiny07");
 
@@ -88,7 +88,7 @@ namespace GithubUsersApi.Tests.Services
             var httpClientFactoryMoq = new Mock<IHttpClientFactory>();
             httpClientFactoryMoq.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
 
-            var githubService = new GithubService(httpClientFactoryMoq.Object);
+            var githubService = new GithubService(client);
 
             var githubServiceMessage = await githubService.GetUser("asdafdsf");
 
