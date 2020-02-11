@@ -5,10 +5,11 @@ using GithubUsersApi.Tests.Helpers;
 using System.Web.Http;
 using System.Net;
 using System.Threading.Tasks;
+using GithubUsersApi.Services.Clients;
 
 namespace GithubUsersApi.Tests.Services
 {
-    public class GithubServiceTests
+    public class GithubClientTests
     {
         [Fact]
         public async void GetUser_InputExisting_ReturnGithubUser()
@@ -59,11 +60,11 @@ namespace GithubUsersApi.Tests.Services
             });
             var client = new HttpClient(clientHandlerStub);
 
-            var githubService = new GithubService(client);
+            var githubService = new GithubClient(client);
 
-            var githubServiceMessage = await githubService.GetUser("destiny07");
+            var githubUser = await githubService.GetUserByLogin("destiny07");
 
-            Assert.NotNull(githubServiceMessage.Message);
+            Assert.NotNull(githubUser);
         }
 
         [Fact]
@@ -81,11 +82,11 @@ namespace GithubUsersApi.Tests.Services
             });
             var client = new HttpClient(clientHandlerStub);
 
-            var githubService = new GithubService(client);
+            var githubService = new GithubClient(client);
 
-            var githubServiceMessage = await githubService.GetUser("asdafdsf");
+            var githubUser = await githubService.GetUserByLogin("asdafdsf");
 
-            Assert.Null(githubServiceMessage.Message);
+            Assert.Null(githubUser);
         }
     }
 }
