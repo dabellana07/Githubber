@@ -1,20 +1,21 @@
+using GithubUsersApi.Messages;
+using GithubUsersApi.Models;
 using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using GithubUsersApi.Models;
 
 namespace GithubUsersApi.Services
 {
     public class GithubService : IGithubService
     {
         private const string GithubApiUrl = "https://api.github.com/users/";
-        
-        private IHttpClientFactory _clientFactory;
 
-        public GithubService(IHttpClientFactory clientFactory)
+        private readonly HttpClient _httpClient;
+
+        public GithubService(HttpClient httpClient)
         {
-            _clientFactory = clientFactory;
+            _httpClient = httpClient;
         }
 
         public async Task<GithubServiceMessage<GithubUser>> GetUser(string username)
@@ -23,8 +24,6 @@ namespace GithubUsersApi.Services
             {
                 var requestUrl = GithubApiUrl + username;
 
-                var client = _clientFactory.CreateClient();
-
                 var request = new HttpRequestMessage(
                     HttpMethod.Get,
                     requestUrl
@@ -32,7 +31,7 @@ namespace GithubUsersApi.Services
                 request.Headers.Add("Accept", "application/vnd.github.v3+json");
                 request.Headers.Add("User-Agent", "Githubber");
 
-                var response = await client.SendAsync(request);
+                var response = await _httpClient.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
                 {

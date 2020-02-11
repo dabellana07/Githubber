@@ -1,6 +1,6 @@
 using System;
 
-namespace GithubUsersApi.Models
+namespace GithubUsersApi.Messages
 {
     public class GithubServiceMessage<T>
     {

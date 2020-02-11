@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GithubUsersApi.Messages;
 using GithubUsersApi.Models;
 
 namespace GithubUsersApi.Services

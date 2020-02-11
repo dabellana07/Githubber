@@ -1,4 +1,5 @@
 ﻿using GithubUsersApi.Controllers;
+using GithubUsersApi.Messages;
 using GithubUsersApi.Models;
 using GithubUsersApi.Services;
 using GithubUsersApi.Tests.Helpers;
