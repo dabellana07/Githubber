@@ -1,18 +1,17 @@
 using Xunit;
 using System.Net.Http;
-using GithubUsersApi.Services;
 using GithubUsersApi.Tests.Helpers;
 using System.Web.Http;
 using System.Net;
 using System.Threading.Tasks;
 using GithubUsersApi.Services.Clients;
 
-namespace GithubUsersApi.Tests.Services
+namespace GithubUsersApi.Tests.Clients
 {
     public class GithubClientTests
     {
         [Fact]
-        public async void GetUser_InputExisting_ReturnGithubUser()
+        public async void GetUserByLogin_InputExisting_ReturnGithubUser()
         {
             var expectedContent = new 
             {
@@ -68,7 +67,7 @@ namespace GithubUsersApi.Tests.Services
         }
 
         [Fact]
-        public async void GetUser_InputNonExisting_ReturnNull()
+        public async void GetUserByLogin_InputNonExisting_ReturnNull()
         {
             var configuration = new HttpConfiguration();
             var clientHandlerStub = new DelegatingHandlerStub((request, cancellationToken) =>
