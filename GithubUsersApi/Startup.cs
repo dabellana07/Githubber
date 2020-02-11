@@ -20,7 +20,6 @@ namespace GithubUsersApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient<IGithubService, GithubService>();
-            services.AddScoped<IGithubService, GithubService>();
             services.AddMemoryCache();
             services.AddControllers();
         }
