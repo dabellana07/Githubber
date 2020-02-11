@@ -1,5 +1,4 @@
 using Xunit;
-using Moq;
 using System.Net.Http;
 using GithubUsersApi.Services;
 using GithubUsersApi.Tests.Helpers;
@@ -60,9 +59,6 @@ namespace GithubUsersApi.Tests.Services
             });
             var client = new HttpClient(clientHandlerStub);
 
-            var httpClientFactoryMoq = new Mock<IHttpClientFactory>();
-            httpClientFactoryMoq.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
-
             var githubService = new GithubService(client);
 
             var githubServiceMessage = await githubService.GetUser("destiny07");
@@ -84,9 +80,6 @@ namespace GithubUsersApi.Tests.Services
                 return Task.FromResult(response);
             });
             var client = new HttpClient(clientHandlerStub);
-
-            var httpClientFactoryMoq = new Mock<IHttpClientFactory>();
-            httpClientFactoryMoq.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
 
             var githubService = new GithubService(client);
 
