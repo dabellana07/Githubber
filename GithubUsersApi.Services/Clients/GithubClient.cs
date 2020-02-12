@@ -38,6 +38,8 @@ namespace GithubUsersApi.Services.Clients
                     {
                         var options = new JsonSerializerOptions();
                         options.PropertyNameCaseInsensitive = true;
+                        options.IgnoreNullValues = true;
+                        options.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
                         return await JsonSerializer.DeserializeAsync<GithubUser>(contentStream, options);
                     }
                 }
