@@ -1,8 +1,6 @@
 ﻿using GithubUsersApi.Models;
 using GithubUsersApi.Services.Utils;
-using Newtonsoft.Json;
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,15 +12,10 @@ namespace GithubUsersApi.Services.Clients
         private const string GithubApiUrl = "https://api.github.com/users/";
 
         private readonly HttpClient _httpClient;
-        private readonly IProjectDeserializer _projectDeserializer;
 
-        public GithubClient(
-            HttpClient httpClient,
-            IProjectDeserializer projectDeserializer
-        )
+        public GithubClient(HttpClient httpClient)
         {
             this._httpClient = httpClient;
-            this._projectDeserializer = projectDeserializer;
         }
 
         public async Task<GithubUser> GetUserByLogin(string username)
@@ -37,14 +30,15 @@ namespace GithubUsersApi.Services.Clients
                 );
                 request.Headers.Add("User-Agent", "Githubber");
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var result = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
+                if (result.IsSuccessStatusCode)
                 {
-                    using (var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync()))
-                    using (var jsonTextReader = new JsonTextReader(streamReader))
+                    using (var contentStream = await result.Content.ReadAsStreamAsync())
                     {
-                        return _projectDeserializer.Deserialize(jsonTextReader);
+                        var options = new JsonSerializerOptions();
+                        options.PropertyNameCaseInsensitive = true;
+                        return await JsonSerializer.DeserializeAsync<GithubUser>(contentStream, options);
                     }
                 }
 

@@ -5,11 +5,6 @@ using System.Web.Http;
 using System.Net;
 using System.Threading.Tasks;
 using GithubUsersApi.Services.Clients;
-using GithubUsersApi.Services.Utils;
-using Moq;
-using Newtonsoft.Json;
-using System.IO;
-using GithubUsersApi.Models;
 
 namespace GithubUsersApi.Tests.Clients
 {
@@ -63,9 +58,8 @@ namespace GithubUsersApi.Tests.Clients
                 return Task.FromResult(response);
             });
             var client = new HttpClient(clientHandlerStub);
-            var projectDeserializerFake = new ProjectDeserializerFake();
 
-            var githubClient = new GithubClient(client, projectDeserializerFake);
+            var githubClient = new GithubClient(client);
 
             var githubUser = await githubClient.GetUserByLogin("destiny07");
 
@@ -86,9 +80,8 @@ namespace GithubUsersApi.Tests.Clients
                 return Task.FromResult(response);
             });
             var client = new HttpClient(clientHandlerStub);
-            var projectDeserializerMoq = new Mock<IProjectDeserializer>();
 
-            var githubClient = new GithubClient(client, projectDeserializerMoq.Object);
+            var githubClient = new GithubClient(client);
 
             var githubUser = await githubClient.GetUserByLogin("asdafdsf");
 

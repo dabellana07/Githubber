@@ -21,7 +21,6 @@ namespace GithubUsersApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IProjectDeserializer, ProjectDeserializer>();
             services.AddSingleton<IGithubService, GithubService>();
             services.AddSingleton<ICacheService, MemoryCacheService>();
             services.AddHttpClient<IGithubClient, GithubClient>();
