@@ -1,4 +1,6 @@
-﻿using GithubUsersApi.Services;
+﻿using FluentAssertions;
+using GithubUsersApi.Models;
+using GithubUsersApi.Services;
 using GithubUsersApi.Services.Clients;
 using GithubUsersApi.Tests.Fixtures;
 using System.Collections.Generic;
@@ -59,6 +61,18 @@ namespace GithubUsersApi.Tests.Services
             });
 
             Assert.Equal(10, githubServiceMessage.Message.Count);
+        }
+
+        [Fact]
+        public async void GetUser_SortByNameDescending()
+        {
+            var githubService = new GithubService(_cacheService, _githubClient);
+
+            var githubServiceMessage = await githubService.GetUsers(new List<string>
+            {
+                "user01", "user05", "user06", "user07"
+            });
+            githubServiceMessage.Message.Should().BeInAscendingOrder(n => n.Name);
         }
     }
 }
