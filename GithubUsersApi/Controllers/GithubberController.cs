@@ -26,6 +26,7 @@ namespace GithubUsersApi.Controllers
             _githubService = githubService;
         }
 
+        [HttpGet]
         public async Task<ActionResult<List<GithubUser>>> Get(
             [ModelBinder(BinderType = typeof(UsernamesBinder))]
             List<string> usernames
