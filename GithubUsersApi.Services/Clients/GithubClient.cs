@@ -29,13 +29,12 @@ namespace GithubUsersApi.Services.Clients
         {
             try
             {
-                var requestUrl = GithubApiUrl + username;
+                var requestUrl = String.Format("{0}{1}", GithubApiUrl, username);
 
                 var request = new HttpRequestMessage(
                     HttpMethod.Get,
                     requestUrl
                 );
-                request.Headers.Add("Accept", "application/vnd.github.v3+json");
                 request.Headers.Add("User-Agent", "Githubber");
 
                 var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
