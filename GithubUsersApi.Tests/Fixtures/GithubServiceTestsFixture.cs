@@ -142,15 +142,7 @@ namespace GithubUsersApi.Tests.Fixtures
                     PublicRepos = 1,
                     Followers = 1
                 });
-            cacheServiceMoq
-                .Setup(s => s.GetGithubUser("randomUser01"))
-                .Returns((GithubUser)null);
-            cacheServiceMoq
-                .Setup(s => s.GetGithubUser("randomUser02"))
-                .Returns((GithubUser)null);
-            cacheServiceMoq
-                .Setup(s => s.GetGithubUser("randomUser02"))
-                .Returns((GithubUser)null);
+            
             return cacheServiceMoq.Object;
         }
 
