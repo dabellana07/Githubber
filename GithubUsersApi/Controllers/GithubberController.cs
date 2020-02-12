@@ -37,6 +37,11 @@ namespace GithubUsersApi.Controllers
 
                 var githubUsers = await _githubService.GetUsers(usernames);
 
+                if (githubUsers.HasException)
+                {
+                    return StatusCode(500);
+                }
+
                 return githubUsers.Message.OrderBy(g => g.Name).ToList();
             }
             catch (Exception)
