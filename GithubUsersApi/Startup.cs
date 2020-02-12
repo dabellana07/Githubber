@@ -23,6 +23,7 @@ namespace GithubUsersApi
         {
             services.AddSingleton<IProjectDeserializer, ProjectDeserializer>();
             services.AddSingleton<IGithubService, GithubService>();
+            services.AddSingleton<ICacheService, MemoryCacheService>();
             services.AddHttpClient<IGithubClient, GithubClient>();
             services.AddMemoryCache();
             services.AddControllers();
