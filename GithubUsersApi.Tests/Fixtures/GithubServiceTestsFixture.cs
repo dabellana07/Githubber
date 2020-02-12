@@ -3,7 +3,7 @@ using GithubUsersApi.Services;
 using GithubUsersApi.Services.Clients;
 using Moq;
 
-namespace GithubUsersApi.Tests.Services
+namespace GithubUsersApi.Tests.Fixtures
 {
     public class GithubServiceTestsFixture
     {

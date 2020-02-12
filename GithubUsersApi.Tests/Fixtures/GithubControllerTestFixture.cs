@@ -4,7 +4,7 @@ using GithubUsersApi.Services;
 using Moq;
 using System.Collections.Generic;
 
-namespace GithubUsersApi.Tests.Controllers
+namespace GithubUsersApi.Tests.Fixtures
 {
     public class GithubControllerTestFixture
     {

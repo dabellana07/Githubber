@@ -1,5 +1,6 @@
 ﻿using GithubUsersApi.Services;
 using GithubUsersApi.Services.Clients;
+using GithubUsersApi.Tests.Fixtures;
 using System.Collections.Generic;
 using Xunit;
 

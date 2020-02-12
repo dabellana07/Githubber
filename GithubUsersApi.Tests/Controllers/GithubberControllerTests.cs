@@ -1,8 +1,7 @@
 ﻿using GithubUsersApi.Controllers;
 using GithubUsersApi.Services;
-using GithubUsersApi.Tests.Helpers;
+using GithubUsersApi.Tests.Fixtures;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
