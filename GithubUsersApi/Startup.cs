@@ -1,6 +1,5 @@
 using GithubUsersApi.Services;
 using GithubUsersApi.Services.Clients;
-using GithubUsersApi.Services.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
