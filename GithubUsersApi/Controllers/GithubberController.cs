@@ -6,7 +6,6 @@ using GithubUsersApi.ModelBinders;
 using GithubUsersApi.Models;
 using GithubUsersApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace GithubUsersApi.Controllers
 {
@@ -14,15 +13,12 @@ namespace GithubUsersApi.Controllers
     [Route("[controller]")]
     public class GithubberController : ControllerBase
     {
-        private ICacheService _cacheService;
         private IGithubService _githubService { get; }
 
         public GithubberController(
-            ICacheService cacheService,
             IGithubService githubService
         )
         {
-            _cacheService = cacheService;
             _githubService = githubService;
         }
 
@@ -39,29 +35,9 @@ namespace GithubUsersApi.Controllers
                     return BadRequest("Number of usernames should be 1 - 10");
                 }
 
-                var githubUsers = new List<GithubUser>();
-                foreach (var githubUsername in usernames)
-                {
-                    GithubUser userFromCache = _cacheService.GetGithubUser(githubUsername);
+                var githubUsers = await _githubService.GetUsers(usernames);
 
-                    if (userFromCache == null)
-                    {
-                        var response = await _githubService.GetUser(githubUsername);
-                        if (!response.HasException)
-                        {
-                            var githubUser = response.Message;
-
-                            _cacheService.SetGithubUser(githubUsername, githubUser);
-                            githubUsers.Add(githubUser);
-                        }
-                    }
-                    else
-                    {
-                        githubUsers.Add(userFromCache);
-                    }
-                }
-
-                return githubUsers.OrderBy(g => g.Name).ToList();
+                return githubUsers.Message.OrderBy(g => g.Name).ToList();
             }
             catch (Exception)
             {

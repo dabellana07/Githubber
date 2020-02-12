@@ -2,32 +2,56 @@ using GithubUsersApi.Messages;
 using GithubUsersApi.Models;
 using GithubUsersApi.Services.Clients;
 using System;
-using System.Net.Http;
-using System.Text.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GithubUsersApi.Services
 {
     public class GithubService : IGithubService
     {
+        private readonly ICacheService _cacheService;
         private readonly IGithubClient _githubClient;
 
-        public GithubService(IGithubClient githubClient)
+        public GithubService(
+            ICacheService cacheService,
+            IGithubClient githubClient
+        )
         {
-            this._githubClient = githubClient;
+            _cacheService = cacheService;
+            _githubClient = githubClient;
         }
 
-        public async Task<GithubServiceMessage<GithubUser>> GetUser(string username)
+        public async Task<GithubServiceMessage<List<GithubUser>>> GetUsers(List<string> usernames)
         {
             try 
             {
-                GithubUser user = await _githubClient.GetUserByLogin(username);
+                var githubUsers = new List<GithubUser>();
 
-                return new GithubServiceMessage<GithubUser>(user, null);
+                foreach (var username in usernames)
+                {
+                    GithubUser userFromCache = _cacheService.GetGithubUser(username);
+
+                    if (userFromCache == null)
+                    {
+                        var userFromApi = await _githubClient.GetUserByLogin(username);
+
+                        if (userFromApi != null)
+                        {
+                            _cacheService.SetGithubUser(username, userFromApi);
+                            githubUsers.Add(userFromApi);
+                        }
+                    }
+                    else
+                    {
+                        githubUsers.Add(userFromCache);
+                    }
+                }
+
+                return new GithubServiceMessage<List<GithubUser>>(githubUsers, null);
             }
             catch (Exception ex)
             {
-                return new GithubServiceMessage<GithubUser>(null, ex);
+                return new GithubServiceMessage<List<GithubUser>>(null, ex);
             }
         }
     }
