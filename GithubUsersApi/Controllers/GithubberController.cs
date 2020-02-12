@@ -14,17 +14,15 @@ namespace GithubUsersApi.Controllers
     [Route("[controller]")]
     public class GithubberController : ControllerBase
     {
-        private readonly int CacheExpirationMinutes = 2;
-
-        private IMemoryCache _memoryCache;
+        private ICacheService _cacheService;
         private IGithubService _githubService { get; }
 
         public GithubberController(
-            IMemoryCache memoryCache,
+            ICacheService cacheService,
             IGithubService githubService
         )
         {
-            _memoryCache = memoryCache;
+            _cacheService = cacheService;
             _githubService = githubService;
         }
 
@@ -43,26 +41,22 @@ namespace GithubUsersApi.Controllers
                 var githubUsers = new List<GithubUser>();
                 foreach (var githubUsername in usernames)
                 {
-                    GithubUser user;
+                    GithubUser userFromCache = _cacheService.GetGithubUser(githubUsername);
 
-                    if (!_memoryCache.TryGetValue<GithubUser>(githubUsername, out user))
+                    if (userFromCache == null)
                     {
                         var response = await _githubService.GetUser(githubUsername);
                         if (!response.HasException)
                         {
-                            user = response.Message;
+                            var githubUser = response.Message;
 
-                            MemoryCacheEntryOptions cacheExpirationOptions = new MemoryCacheEntryOptions();
-                            cacheExpirationOptions.AbsoluteExpiration = DateTime.Now.AddMinutes(CacheExpirationMinutes);
-                            cacheExpirationOptions.Priority = CacheItemPriority.Normal;
-
-                            _memoryCache.Set(githubUsername, user, cacheExpirationOptions);
-                            githubUsers.Add(user);
+                            _cacheService.SetGithubUser(githubUsername, githubUser);
+                            githubUsers.Add(githubUser);
                         }
                     }
                     else
                     {
-                        githubUsers.Add(user);
+                        githubUsers.Add(userFromCache);
                     }
                 }
 

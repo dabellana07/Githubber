@@ -11,23 +11,21 @@ using Xunit;
 
 namespace GithubUsersApi.Tests.Controllers
 {
-    public class GithubberControllerTests : IClassFixture<GithubServiceFixture>
+    public class GithubberControllerTests : IClassFixture<GithubControllerTestFixture>
     {
-        private GithubServiceFixture _githubServiceFixture { get; set; }
+        private GithubControllerTestFixture _githubControllerTestsFixture { get; set; }
 
-        public GithubberControllerTests(GithubServiceFixture githubServiceFixture)
+        public GithubberControllerTests(GithubControllerTestFixture githubServiceFixture)
         {
-            _githubServiceFixture = githubServiceFixture;
+            _githubControllerTestsFixture = githubServiceFixture;
         }
 
         [Fact]
         public async void Get_InputExisting_ReturnList()
         {
-            var memoryCacheFake = new PassiveMemoryCacheFake();
-
             var controller = new GithubberController(
-                memoryCacheFake,
-                _githubServiceFixture.GithubService
+                _githubControllerTestsFixture.CacheService,
+                _githubControllerTestsFixture.GithubService
             );
 
             var usernames = new List<string>
@@ -45,11 +43,9 @@ namespace GithubUsersApi.Tests.Controllers
         [Fact]
         public async void Get_InputWithNonExisting_ReturnList()
         {
-            var memoryCacheFake = new PassiveMemoryCacheFake();
-
             var controller = new GithubberController(
-                memoryCacheFake,
-                _githubServiceFixture.GithubService
+                _githubControllerTestsFixture.CacheService,
+                _githubControllerTestsFixture.GithubService
             );
 
             var usernames = new List<string>
@@ -68,11 +64,9 @@ namespace GithubUsersApi.Tests.Controllers
         [Fact]
         public async void Get_InputNonExisting_ReturnEmptyList()
         {
-            var memoryCacheFake = new PassiveMemoryCacheFake();
-
             var controller = new GithubberController(
-                memoryCacheFake,
-                _githubServiceFixture.GithubService
+                _githubControllerTestsFixture.CacheService,
+                _githubControllerTestsFixture.GithubService
             );
 
             var usernames = new List<string>
@@ -90,12 +84,9 @@ namespace GithubUsersApi.Tests.Controllers
         [Fact]
         public async void Get_InputIsEmpty_ReturnBadRequest()
         {
-            var memoryCacheFake = new PassiveMemoryCacheFake();
-            var githubServiceMoq = new Mock<IGithubService>();
-
             var controller = new GithubberController(
-                memoryCacheFake,
-                _githubServiceFixture.GithubService
+                _githubControllerTestsFixture.CacheService,
+                _githubControllerTestsFixture.GithubService
             );
 
             var result = await controller.Get(new List<string>());
@@ -106,11 +97,9 @@ namespace GithubUsersApi.Tests.Controllers
         [Fact]
         public async void Get_InputIsMoreThanTen_ReturnBadRequest()
         {
-            var memoryCacheFake = new PassiveMemoryCacheFake();
-
             var controller = new GithubberController(
-                memoryCacheFake,
-                _githubServiceFixture.GithubService
+                _githubControllerTestsFixture.CacheService,
+                _githubControllerTestsFixture.GithubService
             );
 
             var usernames = new List<string>
@@ -124,13 +113,32 @@ namespace GithubUsersApi.Tests.Controllers
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async void Get_GetAUserFromCache_ReturnList()
+        {
+            var controller = new GithubberController(
+                _githubControllerTestsFixture.CacheService,
+                _githubControllerTestsFixture.GithubService
+            );
+
+            var usernames = new List<string>
+            {
+                "fromCache01", "randomUser01"
+            };
+
+            var result = await controller.Get(usernames);
+
+            Assert.Equal(2, result.Value.Count);
+        }
     }
 
-    public class GithubServiceFixture
+    public class GithubControllerTestFixture
     {
-        public GithubServiceFixture()
+        public GithubControllerTestFixture()
         {
             GithubService = InitGithubService();
+            CacheService = InitCacheService();
         }
 
         private IGithubService InitGithubService()
@@ -178,6 +186,33 @@ namespace GithubUsersApi.Tests.Controllers
             return githubServiceMoq.Object;
         }
 
+        private ICacheService InitCacheService()
+        {
+            var cacheServiceMoq = new Mock<ICacheService>();
+            cacheServiceMoq
+                .Setup(s => s.GetGithubUser("fromCache01"))
+                .Returns(new GithubUser
+                {
+                    Name = "From CacheOne",
+                    Login = "fromCache01",
+                    Company = null,
+                    PublicRepos = 1,
+                    Followers = 1
+                });
+            cacheServiceMoq
+                .Setup(s => s.GetGithubUser("randomUser01"))
+                .Returns((GithubUser)null);
+            cacheServiceMoq
+                .Setup(s => s.GetGithubUser("randomUser02"))
+                .Returns((GithubUser)null);
+            cacheServiceMoq
+                .Setup(s => s.GetGithubUser("randomUser02"))
+                .Returns((GithubUser)null);
+            return cacheServiceMoq.Object;
+        }
+
         public IGithubService GithubService { get; set; }
+
+        public ICacheService CacheService { get; set; }
     }
 }
