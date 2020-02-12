@@ -25,9 +25,12 @@ namespace GithubUsersApi.Services
         {
             try 
             {
+                var usernamesToProcess = usernames.Count <= 10
+                    ? usernames
+                    : usernames.GetRange(0, 10);
                 var githubUsers = new List<GithubUser>();
 
-                foreach (var username in usernames)
+                foreach (var username in usernamesToProcess)
                 {
                     GithubUser userFromCache = _cacheService.GetGithubUser(username);
 

@@ -81,23 +81,6 @@ namespace GithubUsersApi.Tests.Controllers
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
-
-        [Fact]
-        public async void Get_InputIsMoreThanTen_ReturnBadRequest()
-        {
-            var controller = new GithubberController(_githubService);
-
-            var usernames = new List<string>
-            {
-                "Test1", "Test2", "Test3", "Test4", "Test5",
-                "Test6", "Test7", "Test8", "Test9", "Test10",
-                "Test11"
-            };
-
-            var result = await controller.Get(usernames);
-
-            Assert.IsType<BadRequestObjectResult>(result.Result);
-        }
     }
 
     public class GithubControllerTestFixture
