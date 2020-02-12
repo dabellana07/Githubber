@@ -5,6 +5,8 @@ using System.Web.Http;
 using System.Net;
 using System.Threading.Tasks;
 using GithubUsersApi.Services.Clients;
+using GithubUsersApi.Models;
+using FluentAssertions;
 
 namespace GithubUsersApi.Tests.Clients
 {
@@ -34,7 +36,7 @@ namespace GithubUsersApi.Tests.Clients
                   type= "User",
                   site_admin= false,
                   name= "Destiny Awbelisk",
-                  company= "",
+                  company= (string) null,
                   blog= "",
                   location= "",
                   email= "",
@@ -63,7 +65,16 @@ namespace GithubUsersApi.Tests.Clients
 
             var githubUser = await githubClient.GetUserByLogin("destiny07");
 
-            Assert.NotNull(githubUser);
+            var expectedGithubUser = new GithubUser
+            {
+                Name = "Destiny Awbelisk",
+                Company = null,
+                Login = "destiny07",
+                PublicRepos = 4,
+                Followers = 2
+            };
+
+            githubUser.Should().BeEquivalentTo(expectedGithubUser);
         }
 
         [Fact]
