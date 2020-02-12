@@ -77,7 +77,7 @@ namespace GithubUsersApi.Tests.Controllers
         {
             var controller = new GithubberController(_githubService);
 
-            var result = await controller.Get(new List<string>());
+            var result = await controller.Get(null);
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }

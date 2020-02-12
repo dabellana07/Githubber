@@ -30,7 +30,7 @@ namespace GithubUsersApi.Controllers
         {
             try
             {
-                if (usernames.Count < 1 || usernames.Count > 10)
+                if (usernames == null || usernames.Count < 1)
                 {
                     return BadRequest("Number of usernames should be 1 - 10");
                 }
