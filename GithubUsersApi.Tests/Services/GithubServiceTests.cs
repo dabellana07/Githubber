@@ -15,6 +15,7 @@ namespace GithubUsersApi.Tests.Services
 
         public GithubServiceTests(GithubServiceTestsFixture githubClientFixture)
         {
+            githubClientFixture.InitGithubClient();
             _cacheService = githubClientFixture.CacheService;
             _githubClient = githubClientFixture.GithubClient;
         }
