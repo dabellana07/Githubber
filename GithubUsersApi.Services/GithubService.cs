@@ -3,6 +3,7 @@ using GithubUsersApi.Models;
 using GithubUsersApi.Services.Clients;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GithubUsersApi.Services
@@ -50,7 +51,8 @@ namespace GithubUsersApi.Services
                     }
                 }
 
-                return new GithubServiceMessage<List<GithubUser>>(githubUsers, null);
+                return new GithubServiceMessage<List<GithubUser>>(
+                    githubUsers.OrderBy(g => g.Name).ToList(), null);
             }
             catch (Exception ex)
             {
