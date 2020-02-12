@@ -28,21 +28,14 @@ namespace GithubUsersApi.Controllers
             List<string> usernames
         )
         {
-            try
+            if (usernames == null || usernames.Count < 1)
             {
-                if (usernames == null || usernames.Count < 1)
-                {
-                    return BadRequest("Number of usernames should be 1 - 10");
-                }
-
-                var githubUsers = await _githubService.GetUsers(usernames);
-
-                return githubUsers;
+                return BadRequest("Number of usernames should be 1 - 10");
             }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+
+            var githubUsers = await _githubService.GetUsers(usernames);
+
+            return githubUsers;
         }
     }
 }
