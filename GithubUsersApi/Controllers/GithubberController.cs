@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GithubUsersApi.ModelBinders;
 using GithubUsersApi.Models;
 using GithubUsersApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,10 @@ namespace GithubUsersApi.Controllers
             _githubService = githubService;
         }
 
-        public async Task<ActionResult<List<GithubUser>>> Get([FromQuery(Name = "usernames")] List<string> usernames)
+        public async Task<ActionResult<List<GithubUser>>> Get(
+            [ModelBinder(BinderType = typeof(UsernamesBinder))]
+            List<string> usernames
+        )
         {
             try
             {
