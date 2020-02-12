@@ -20,36 +20,29 @@ namespace GithubUsersApi.Services.Clients
 
         public async Task<GithubUser> GetUserByLogin(string username)
         {
-            try
+            var requestUrl = String.Format("{0}{1}", GithubApiUrl, username);
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                requestUrl
+            );
+            request.Headers.Add("User-Agent", "Githubber");
+
+            var result = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+            if (result.IsSuccessStatusCode)
             {
-                var requestUrl = String.Format("{0}{1}", GithubApiUrl, username);
-
-                var request = new HttpRequestMessage(
-                    HttpMethod.Get,
-                    requestUrl
-                );
-                request.Headers.Add("User-Agent", "Githubber");
-
-                var result = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-                if (result.IsSuccessStatusCode)
+                using (var contentStream = await result.Content.ReadAsStreamAsync())
                 {
-                    using (var contentStream = await result.Content.ReadAsStreamAsync())
-                    {
-                        var options = new JsonSerializerOptions();
-                        options.PropertyNameCaseInsensitive = true;
-                        options.IgnoreNullValues = true;
-                        options.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
-                        return await JsonSerializer.DeserializeAsync<GithubUser>(contentStream, options);
-                    }
+                    var options = new JsonSerializerOptions();
+                    options.PropertyNameCaseInsensitive = true;
+                    options.IgnoreNullValues = true;
+                    options.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
+                    return await JsonSerializer.DeserializeAsync<GithubUser>(contentStream, options);
                 }
+            }
 
-                return null;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return null;
         }
     }
 }
