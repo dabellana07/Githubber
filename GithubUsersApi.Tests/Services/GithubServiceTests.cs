@@ -25,9 +25,9 @@ namespace GithubUsersApi.Tests.Services
         {
             var githubService = new GithubService(_cacheService, _githubClient);
 
-            var githubServiceMessage = await githubService.GetUsers(new List<string> { "user01", "fromCache01" });
+            var githubUsers = await githubService.GetUsers(new List<string> { "user01", "fromCache01" });
 
-            Assert.Equal(2, githubServiceMessage.Message.Count);
+            Assert.Equal(2, githubUsers.Count);
         }
 
         [Fact]
@@ -35,9 +35,9 @@ namespace GithubUsersApi.Tests.Services
         {
             var githubService = new GithubService(_cacheService, _githubClient);
 
-            var githubServiceMessage = await githubService.GetUsers(new List<string> { "user02", "user03" });
+            var githubUsers = await githubService.GetUsers(new List<string> { "user02", "user03" });
 
-            Assert.Empty(githubServiceMessage.Message);
+            Assert.Empty(githubUsers);
         }
 
         [Fact]
@@ -45,9 +45,9 @@ namespace GithubUsersApi.Tests.Services
         {
             var githubService = new GithubService(_cacheService, _githubClient);
 
-            var githubServiceMessage = await githubService.GetUsers(new List<string> { "fromCache01", "user03", "user04" });
+            var githubUsers = await githubService.GetUsers(new List<string> { "fromCache01", "user03", "user04" });
 
-            Assert.Single(githubServiceMessage.Message);
+            Assert.Single(githubUsers);
         }
 
         [Fact]
@@ -55,13 +55,13 @@ namespace GithubUsersApi.Tests.Services
         {
             var githubService = new GithubService(_cacheService, _githubClient);
 
-            var githubServiceMessage = await githubService.GetUsers(new List<string> { 
+            var githubUsers = await githubService.GetUsers(new List<string> { 
                 "fromCache01", "user01", "user05", "user06",
                 "user07", "user08", "user09", "user10", 
                 "user11", "user12", "user13", "user14", "user15"
             });
 
-            Assert.Equal(10, githubServiceMessage.Message.Count);
+            Assert.Equal(10, githubUsers.Count);
         }
 
         [Fact]
@@ -69,11 +69,11 @@ namespace GithubUsersApi.Tests.Services
         {
             var githubService = new GithubService(_cacheService, _githubClient);
 
-            var githubServiceMessage = await githubService.GetUsers(new List<string>
+            var githubUsers = await githubService.GetUsers(new List<string>
             {
                 "user01", "user05", "user06", "user07"
             });
-            githubServiceMessage.Message.Should().BeInAscendingOrder(n => n.Name);
+            githubUsers.Should().BeInAscendingOrder(n => n.Name);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using GithubUsersApi.Messages;
-using GithubUsersApi.Models;
+﻿using GithubUsersApi.Models;
 using GithubUsersApi.Services;
 using Moq;
 using System.Collections.Generic;
@@ -44,19 +43,18 @@ namespace GithubUsersApi.Tests.Fixtures
             };
             var githubServiceMoq = new Mock<IGithubService>();
             githubServiceMoq.Setup(s => s.GetUsers(new List<string> { "randomUser01", "randomUser02", "randomUser03" }))
-                .ReturnsAsync(new GithubServiceMessage<List<GithubUser>>(
-                    users, null));
+                .ReturnsAsync(new List<GithubUser>(users));
             githubServiceMoq.Setup(s => s.GetUsers(new List<string> {
                 "randomUser01",
                 "randomUser02",
                 "randomUser03",
                 "nonExistingUser01"
-            })).ReturnsAsync(new GithubServiceMessage<List<GithubUser>>(users, null));
+            })).ReturnsAsync(new List<GithubUser>(users));
             githubServiceMoq.Setup(s => s.GetUsers(new List<string> {
                 "nonExistingUser01",
                 "nonExistingUser02",
                 "nonExistingUser03"
-            })).ReturnsAsync(new GithubServiceMessage<List<GithubUser>>(new List<GithubUser>(), null));
+            })).ReturnsAsync(new List<GithubUser>());
             return githubServiceMoq.Object;
         }
 

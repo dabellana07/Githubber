@@ -1,7 +1,5 @@
-using GithubUsersApi.Messages;
 using GithubUsersApi.Models;
 using GithubUsersApi.Services.Clients;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,42 +20,34 @@ namespace GithubUsersApi.Services
             _githubClient = githubClient;
         }
 
-        public async Task<GithubServiceMessage<List<GithubUser>>> GetUsers(List<string> usernames)
+        public async Task<List<GithubUser>> GetUsers(List<string> usernames)
         {
-            try 
+            var usernamesToProcess = usernames.Count <= 10
+                ? usernames
+                : usernames.GetRange(0, 10);
+            var githubUsers = new List<GithubUser>();
+
+            foreach (var username in usernamesToProcess)
             {
-                var usernamesToProcess = usernames.Count <= 10
-                    ? usernames
-                    : usernames.GetRange(0, 10);
-                var githubUsers = new List<GithubUser>();
+                GithubUser userFromCache = _cacheService.GetGithubUser(username);
 
-                foreach (var username in usernamesToProcess)
+                if (userFromCache == null)
                 {
-                    GithubUser userFromCache = _cacheService.GetGithubUser(username);
+                    var userFromApi = await _githubClient.GetUserByLogin(username);
 
-                    if (userFromCache == null)
+                    if (userFromApi != null)
                     {
-                        var userFromApi = await _githubClient.GetUserByLogin(username);
-
-                        if (userFromApi != null)
-                        {
-                            _cacheService.SetGithubUser(username, userFromApi);
-                            githubUsers.Add(userFromApi);
-                        }
-                    }
-                    else
-                    {
-                        githubUsers.Add(userFromCache);
+                        _cacheService.SetGithubUser(username, userFromApi);
+                        githubUsers.Add(userFromApi);
                     }
                 }
+                else
+                {
+                    githubUsers.Add(userFromCache);
+                }
+            }
 
-                return new GithubServiceMessage<List<GithubUser>>(
-                    githubUsers.OrderBy(g => g.Name).ToList(), null);
-            }
-            catch (Exception ex)
-            {
-                return new GithubServiceMessage<List<GithubUser>>(null, ex);
-            }
+            return githubUsers.OrderBy(g => g.Name).ToList();
         }
     }
 }

@@ -35,14 +35,9 @@ namespace GithubUsersApi.Controllers
                     return BadRequest("Number of usernames should be 1 - 10");
                 }
 
-                var githubServiceResponse = await _githubService.GetUsers(usernames);
+                var githubUsers = await _githubService.GetUsers(usernames);
 
-                if (githubServiceResponse.HasException)
-                {
-                    return StatusCode(500);
-                }
-
-                return githubServiceResponse.Message;
+                return githubUsers;
             }
             catch (Exception)
             {
