@@ -1,3 +1,4 @@
+using GithubUsersApi.Middlewares;
 using GithubUsersApi.Services;
 using GithubUsersApi.Services.Clients;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,8 @@ namespace GithubUsersApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseRouting();
 
