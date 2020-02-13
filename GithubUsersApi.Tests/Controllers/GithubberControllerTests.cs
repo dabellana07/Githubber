@@ -75,7 +75,7 @@ namespace GithubUsersApi.Tests.Controllers
 
             var result = await controller.Get(null);
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Empty(result.Value);
         }
     }
 }

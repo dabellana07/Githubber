@@ -28,12 +28,17 @@ namespace GithubUsersApi.Controllers
             List<string> usernames
         )
         {
-            if (usernames == null || usernames.Count < 1)
+            var githubUsers = new List<GithubUser>();
+
+            if (usernames == null)
+                return githubUsers;
+
+            if (usernames.Count < 1)
             {
                 return BadRequest("Number of usernames should be 1 - 10");
             }
 
-            var githubUsers = await _githubService.GetUsers(usernames);
+            githubUsers = await _githubService.GetUsers(usernames);
 
             return githubUsers;
         }
