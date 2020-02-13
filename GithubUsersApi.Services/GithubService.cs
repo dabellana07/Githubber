@@ -2,6 +2,7 @@ using GithubUsersApi.Models;
 using GithubUsersApi.Services.Clients;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace GithubUsersApi.Services
@@ -31,7 +32,7 @@ namespace GithubUsersApi.Services
             {
                 GithubUser userFromCache = _cacheService.GetGithubUser(username);
 
-                if (string.IsNullOrEmpty(username))
+                if (!IsValidUsername(username))
                     continue;
 
                 if (userFromCache == null)
@@ -51,6 +52,13 @@ namespace GithubUsersApi.Services
             }
 
             return githubUsers.OrderBy(g => g.Name).ToList();
+        }
+
+        public bool IsValidUsername(string username)
+        {
+            string pattern = @"^[A-Za-z0-9]+[A-Za-z0-9-]*[A-Za-z0-9]+$";
+
+            return Regex.IsMatch(username, pattern);
         }
     }
 }

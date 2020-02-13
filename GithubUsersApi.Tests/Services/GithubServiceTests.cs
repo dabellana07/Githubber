@@ -75,5 +75,53 @@ namespace GithubUsersApi.Tests.Services
             });
             githubUsers.Should().BeInAscendingOrder(n => n.Name);
         }
+
+        [Fact]
+        public void IsValidUsername_AlphanumericUsername_ReturnTrue()
+        {
+            var githubService = new GithubService(_cacheService, _githubClient);
+
+            var username = "destiny07";
+
+            var result = githubService.IsValidUsername(username);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsValidUsername_UsernameWithHyphen_ReturnTrue()
+        {
+            var githubService = new GithubService(_cacheService, _githubClient);
+
+            var username = "random-user01";
+
+            var result = githubService.IsValidUsername(username);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsValidUsername_UsernameStartsWithHyphen_ReturnFalse()
+        {
+            var githubService = new GithubService(_cacheService, _githubClient);
+
+            var username = "-random-user01";
+
+            var result = githubService.IsValidUsername(username);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsValidUsername_UsernameEndsWithHyphen_ReturnFalse()
+        {
+            var githubService = new GithubService(_cacheService, _githubClient);
+
+            var username = "random-user01-";
+
+            var result = githubService.IsValidUsername(username);
+
+            Assert.False(result);
+        }
     }
 }
