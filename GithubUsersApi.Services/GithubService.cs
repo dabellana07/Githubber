@@ -31,6 +31,9 @@ namespace GithubUsersApi.Services
             {
                 GithubUser userFromCache = _cacheService.GetGithubUser(username);
 
+                if (string.IsNullOrEmpty(username))
+                    continue;
+
                 if (userFromCache == null)
                 {
                     var userFromApi = await _githubClient.GetUserByLogin(username);
