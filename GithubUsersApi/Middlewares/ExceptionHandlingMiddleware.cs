@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
@@ -15,7 +16,7 @@ namespace GithubUsersApi.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, IHostingEnvironment env)
+        public async Task InvokeAsync(HttpContext context, IWebHostEnvironment env)
         {
             try
             {
@@ -27,7 +28,7 @@ namespace GithubUsersApi.Middlewares
             }
         }
 
-        public Task HandleException(HttpContext context, IHostingEnvironment env, Exception ex)
+        public Task HandleException(HttpContext context, IWebHostEnvironment env, Exception ex)
         {
             string errorMessage = env.IsDevelopment()
                 ? ex.Message
