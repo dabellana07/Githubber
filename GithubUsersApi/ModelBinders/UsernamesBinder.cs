@@ -13,15 +13,27 @@ namespace GithubUsersApi.ModelBinders
             if (bindingContext == null)
                 throw new ArgumentNullException(nameof(bindingContext));
 
-            var values = bindingContext.ValueProvider.GetValue("Usernames");
-            if (values.Length == 0)
+            var value = bindingContext.ValueProvider.GetValue("Usernames");
+            if (value.Length == 0)
                 return Task.CompletedTask;
 
-            var splitData = values.FirstValue.Split(',');
-            var usernames = new List<string>(splitData);
+            var usernames = new List<string>(ParseCommaSeparatedStringToList(value.FirstValue));
             bindingContext.Result = ModelBindingResult.Success(usernames);
 
             return Task.CompletedTask;
+        }
+
+        private List<string> ParseCommaSeparatedStringToList(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
+            var splitData = value.Split(',');
+            var lastIndex = splitData.Length <= 10
+                ? splitData.Length
+                : 10;
+            var usernames = splitData[0..lastIndex];
+            return new List<string>(usernames);
         }
     }
 }
