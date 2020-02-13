@@ -9,7 +9,7 @@ namespace GithubUsersApi.Services.Clients
 {
     public class GithubClient : IGithubClient
     {
-        private const string GithubApiUrl = "https://api.github.com/users/";
+        private const string GithubUserEndpoint = "users/";
 
         private readonly HttpClient _httpClient;
 
@@ -20,13 +20,12 @@ namespace GithubUsersApi.Services.Clients
 
         public async Task<GithubUser> GetUserByLogin(string username)
         {
-            var requestUrl = String.Format("{0}{1}", GithubApiUrl, username);
+            var requestUrl = String.Format("{0}{1}", GithubUserEndpoint, username);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 requestUrl
             );
-            request.Headers.Add("User-Agent", "Githubber");
 
             var result = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 

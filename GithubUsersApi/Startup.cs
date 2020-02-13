@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Net.Http.Headers;
 
 namespace GithubUsersApi
 {
@@ -23,7 +25,11 @@ namespace GithubUsersApi
         {
             services.AddSingleton<IGithubService, GithubService>();
             services.AddSingleton<ICacheService, MemoryCacheService>();
-            services.AddHttpClient<IGithubClient, GithubClient>();
+            services.AddHttpClient<IGithubClient, GithubClient>(c =>
+            {
+                c.BaseAddress = new Uri(Configuration["GithubApiUrl"]);
+                c.DefaultRequestHeaders.Add("User-Agent", "Githubber");
+            });
             services.AddMemoryCache();
             services.AddControllers();
         }

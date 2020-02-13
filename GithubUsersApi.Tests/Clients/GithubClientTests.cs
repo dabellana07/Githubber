@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GithubUsersApi.Services.Clients;
 using GithubUsersApi.Models;
 using FluentAssertions;
+using System;
 
 namespace GithubUsersApi.Tests.Clients
 {
@@ -60,6 +61,7 @@ namespace GithubUsersApi.Tests.Clients
                 return Task.FromResult(response);
             });
             var client = new HttpClient(clientHandlerStub);
+            client.BaseAddress = new Uri("https://api.github.com/");
 
             var githubClient = new GithubClient(client);
 
@@ -91,6 +93,7 @@ namespace GithubUsersApi.Tests.Clients
                 return Task.FromResult(response);
             });
             var client = new HttpClient(clientHandlerStub);
+            client.BaseAddress = new Uri("https://api.github.com/");
 
             var githubClient = new GithubClient(client);
 
