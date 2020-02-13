@@ -35,8 +35,6 @@ namespace GithubUsersApi.Services.Clients
                 using (var contentStream = await result.Content.ReadAsStreamAsync())
                 {
                     var options = new JsonSerializerOptions();
-                    options.PropertyNameCaseInsensitive = true;
-                    options.IgnoreNullValues = true;
                     options.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
                     return await JsonSerializer.DeserializeAsync<GithubUser>(contentStream, options);
                 }
